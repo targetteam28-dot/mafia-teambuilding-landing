@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Мафия и тимбилдинг в Варшаве</title>
+<meta name="description" content="Проводите мафию и кибертурниры для офиса в Варшаве. Напишите нам в Telegram.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#2a0a0e; --bg2:#120305; --accent:#e23a4e; --glow:rgba(226,58,78,.35); --ink:#fff; --soft:rgba(255,255,255,.72); --glass:rgba(255,255,255,.12); }
+  body[data-slide="team"]{ --bg:#0f2f33; --bg2:#061316; --accent:#d4ff3a; --glow:rgba(80,220,210,.3); }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Montserrat,system-ui,sans-serif;color:var(--ink);background:var(--bg2);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+  .stage{position:relative;min-height:100vh;min-height:100svh;overflow:hidden;
+    background:radial-gradient(ellipse 70% 75% at 50% 48%,var(--bg) 0%,var(--bg2) 100%);transition:background .8s ease}
+  .stage::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.07;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  /* Верх */
+  .top{position:relative;z-index:5;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:24px 40px}
+  .nav{display:flex;gap:4px;padding:5px;border-radius:999px;background:var(--glass);backdrop-filter:blur(10px)}
+  .nav button,.nav a{padding:9px 18px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;transition:background .3s,color .3s}
+  .nav button.on{background:#fff;color:#111}
+  .icons{justify-self:end;display:flex;gap:10px}
+  .ic{width:38px;height:38px;border-radius:50%;background:var(--glass);display:grid;place-items:center;transition:background .3s}
+  .ic:hover{background:rgba(255,255,255,.22)}
+  .ic svg{width:17px;height:17px}
+
+  /* Слайд */
+  .slide{position:absolute;inset:0;display:grid;grid-template-columns:minmax(300px,.95fr) minmax(360px,1.6fr) minmax(200px,.7fr);align-items:center;gap:24px;padding:110px 40px 90px;
+    opacity:0;visibility:hidden;transition:opacity .6s ease,visibility 0s .6s}
+  .slide.on{opacity:1;visibility:visible;transition:opacity .6s ease}
+  .left{max-width:440px}
+  .arrows{display:flex;gap:8px;margin-bottom:26px}
+  .arrows button{width:34px;height:34px;border-radius:50%;background:var(--glass);display:grid;place-items:center;transition:background .3s}
+  .arrows button:hover{background:rgba(255,255,255,.24)}
+  .arrows svg{width:14px;height:14px}
+  .kicker{font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  h1{font-size:clamp(36px,4.4vw,62px);font-weight:600;line-height:1.05;letter-spacing:-.01em}
+  .text{margin:22px 0 30px;font-size:15px;line-height:1.65;color:var(--soft);max-width:400px}
+  .cta{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#111;padding:15px 24px 15px 20px;border-radius:999px;font-size:14px;font-weight:600;transition:transform .2s,box-shadow .3s}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 14px 34px -10px rgba(0,0,0,.6)}
+  .cta svg{width:18px;height:18px;color:#29a9eb}
+  .cta .arr{width:14px;height:14px;color:#111}
+
+  .center{position:relative;display:grid;place-items:center;height:100%}
+  .obj{display:block;width:100%;max-width:640px;aspect-ratio:4/3;object-fit:cover;border-radius:28px;border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 80px -30px rgba(0,0,0,.85),0 0 90px -20px var(--glow);animation:float 6s ease-in-out infinite}
+    animation:float 6s ease-in-out infinite}
+  .shadow{width:60%;height:24px;margin-top:18px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent);animation:shadow 6s ease-in-out infinite}
+  @keyframes float{50%{transform:translateY(-12px)}}
+  @keyframes shadow{50%{transform:scaleX(.9);opacity:.75}}
+  .slide.on .obj{animation:in .9s cubic-bezier(.2,.7,.2,1),float 6s ease-in-out .9s infinite}
+  @keyframes in{from{opacity:0;transform:scale(.92) translateY(20px)}}
+  .slide.on .left>*,.slide.on .right>*{animation:up .7s cubic-bezier(.2,.7,.2,1) both}
+  .slide.on .left>*:nth-child(2),.slide.on .right>*:nth-child(2){animation-delay:.06s}
+  .slide.on .left>*:nth-child(3),.slide.on .right>*:nth-child(3){animation-delay:.12s}
+  .slide.on .left>*:nth-child(4),.slide.on .right>*:nth-child(4){animation-delay:.18s}
+  .slide.on .left>*:nth-child(5){animation-delay:.24s}
+  @keyframes up{from{opacity:0;transform:translateY(16px)}}
+
+  .right{justify-self:end;text-align:right}
+  .big{font-size:clamp(40px,4vw,58px);font-weight:600;line-height:1}
+  .big-sub{font-size:13px;color:var(--soft);margin-top:8px}
+  .label{font-size:12px;color:var(--soft);margin:30px 0 12px}
+  .chips{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+  .chip{min-width:52px;height:52px;padding:0 14px;border-radius:999px;background:var(--glass);display:grid;place-items:center;font-size:13px;font-weight:600;transition:background .3s,color .3s}
+  button.chip:hover{background:rgba(255,255,255,.22)}
+  .chip.on{background:#fff;color:#111}
+
+  .foot{position:absolute;left:50%;bottom:32px;transform:translateX(-50%);z-index:4;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:var(--soft);white-space:nowrap;transition:color .3s}
+  .foot:hover{color:#fff}
+  .foot svg{width:16px;height:16px}
+
+  /* Мобильная версия */
+  @media (max-width:900px){
+    .top{grid-template-columns:auto 1fr;padding:16px;gap:10px}
+    .nav{grid-column:1/-1;grid-row:2;justify-self:center}
+    .nav a{display:none}
+    .stage{min-height:auto}
+    .slide{position:relative;display:none;grid-template-columns:1fr;gap:0;padding:6px 16px 36px;text-align:left}
+    .slide.on{display:grid}
+    .left{max-width:none;order:1}
+    .arrows{display:none}
+    .center{order:2;margin:24px 0 0}
+    .obj{border-radius:20px}
+    .shadow{display:none}
+    .right{order:3;justify-self:stretch;text-align:left;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:20px}
+    .right>div:first-child{width:100%;display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+    .big{font-size:40px}
+    .big-sub{margin:0}
+    .right .label{display:none}
+    .chips{justify-content:flex-start}
+    .chip{height:42px;min-width:42px}
+    .text{margin:16px 0 0}
+    .left .cta{display:none}
+    .mcta{order:4;position:sticky;bottom:14px;z-index:6;margin-top:22px}
+    .mcta .cta{box-shadow:0 12px 30px -8px rgba(0,0,0,.7)}
+    .mcta .cta{display:flex;justify-content:center;width:100%;padding:17px 20px}
+    .foot{position:static;transform:none;justify-content:center}
+    .bottom{display:flex;justify-content:center;padding:6px 16px 28px}
+  }
+  @media (min-width:901px){ .mcta{display:none} .bottom{display:contents} }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','4194705274189334');
+fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=4194705274189334&ev=PageView&noscript=1" alt=""></noscript>
+<!-- End Meta Pixel -->
+</head>
+<body data-slide="mafia">
+<main class="stage">
+  <header class="top">
+    <span></span>
+    <nav class="nav">
+      <button data-go="mafia" class="on">Мафия</button>
+      <button data-go="team">Тимбилдинг</button>
+      <a data-track="TelegramClick" href="https://t.me/catharsisgaming" target="_blank" rel="noopener">Контакты</a>
+    </nav>
+    <div class="icons">
+      <a class="ic" data-track="InstagramClick" href="https://www.instagram.com/catharsis_gaming_club/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a>
+      <a class="ic" data-track="TelegramClick" href="https://t.me/catharsisgaming" target="_blank" rel="noopener" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.6 19.8c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.2-8.3c.4-.4-.1-.6-.6-.2L6 13.3l-4.9-1.5c-1.1-.3-1.1-1.1.2-1.6L20.5 2.8c.9-.3 1.7.2 1.4 1.5z"/></svg></a>
+    </div>
+  </header>
+
+  <!-- МАФИЯ -->
+  <section class="slide on" id="mafia" data-name="mafia">
+    <div class="left">
+      <div class="arrows"><button data-prev aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 6-6 6 6 6"/></svg></button><button data-next aria-label="Вперёд"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></button></div>
+      <div class="kicker">Для клубов и организаторов мафии</div>
+      <h1>Проводите мафию у&nbsp;нас</h1>
+      <p class="text">Приводите свой клуб — мы даём площадку: большой игровой стол, приглушённый свет и музыку под атмосферу. Вы ведёте игру, мы обо всём остальном.</p>
+      <a class="cta" data-goal="mafia" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.6 19.8c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.2-8.3c.4-.4-.1-.6-.6-.2L6 13.3l-4.9-1.5c-1.1-.3-1.1-1.1.2-1.6L20.5 2.8c.9-.3 1.7.2 1.4 1.5z"/></svg>Обсудить условия<svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+    </div>
+    <div class="center"><img class="obj" src="img/mafia.jpg" alt="Стол для мафии со свечами и масками"><div class="shadow"></div></div>
+    <div class="right">
+      <div><div class="big">∞</div><div class="big-sub">играете без ограничений</div></div>
+      <div class="label">Время игры</div>
+      <div class="chips"><span class="chip on">договорное</span></div>
+      <div class="label">Оплата</div>
+      <div class="chips"><span class="chip on">депозитом</span></div>
+    </div>
+    <div class="mcta"><a class="cta" data-goal="mafia" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.6 19.8c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.2-8.3c.4-.4-.1-.6-.6-.2L6 13.3l-4.9-1.5c-1.1-.3-1.1-1.1.2-1.6L20.5 2.8c.9-.3 1.7.2 1.4 1.5z"/></svg>Обсудить условия в Telegram</a></div>
+  </section>
+
+  <!-- ТИМБИЛДИНГ -->
+  <section class="slide" id="team" data-name="team">
+    <div class="left">
+      <div class="arrows"><button data-prev aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 6-6 6 6 6"/></svg></button><button data-next aria-label="Вперёд"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></button></div>
+      <div class="kicker">Кибертурнир для офиса</div>
+      <h1>Чей отдел сильнее?</h1>
+      <p class="text">Корпоратив, который запомнят: команды из разных отделов, турнирная сетка, судейство и награждение кубком. Вы приводите коллег — мы проводим турнир.</p>
+      <a class="cta" data-goal="teambuilding" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.6 19.8c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.2-8.3c.4-.4-.1-.6-.6-.2L6 13.3l-4.9-1.5c-1.1-.3-1.1-1.1.2-1.6L20.5 2.8c.9-.3 1.7.2 1.4 1.5z"/></svg>Оставить заявку<svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+    </div>
+    <div class="center"><img class="obj" src="img/teambuilding.jpg" alt="Коллеги радуются победе на кибертурнире"><div class="shadow"></div></div>
+    <div class="right">
+      <div><div class="big">10–60</div><div class="big-sub">человек в команде</div></div>
+      <div class="label">Выберите игру:</div>
+      <div class="chips" data-games><button class="chip on" data-game="CS2">CS2</button><button class="chip" data-game="Dota">Dota</button><button class="chip" data-game="FC">FC</button></div>
+      <div class="label">В финале</div>
+      <div class="chips"><span class="chip on">кубок 🏆</span></div>
+    </div>
+    <div class="mcta"><a class="cta" data-goal="teambuilding" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.6 19.8c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.2-8.3c.4-.4-.1-.6-.6-.2L6 13.3l-4.9-1.5c-1.1-.3-1.1-1.1.2-1.6L20.5 2.8c.9-.3 1.7.2 1.4 1.5z"/></svg>Оставить заявку в Telegram</a></div>
+  </section>
+
+  <div class="bottom">
+    <a class="foot" data-track="FindLocation" href="https://maps.google.com/?q=Al.+Jerozolimskie+63,+Warszawa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Al. Jerozolimskie 63, Варшава</a>
+  </div>
+</main>
+
+<script>
+  var TG = 'https://t.me/catharsisgaming?text=';
+  var msg = {
+    mafia: function(){ return 'Здравствуйте, хочу провести мафию у вас. Подскажите условия'; },
+    teambuilding: function(){ return 'Здравствуйте, хочу заказать кибертурнир для команды (' + game + ')'; }
+  };
+  var game = 'CS2';
+  function updateLinks(){
+    document.querySelectorAll('.cta').forEach(function(a){ a.href = TG + encodeURIComponent(msg[a.dataset.goal]()); });
+  }
+  var order = ['mafia','team'];
+  var NAMES = {mafia:'Мафия', team:'Тимбилдинг', teambuilding:'Тимбилдинг'};
+  function px(type, name, params){ try{ if(window.fbq) fbq(type, name, params || {}); }catch(e){} }
+  var seen = {};
+  function show(id, byUser){
+    if(order.indexOf(id) < 0) id = 'mafia';
+    document.body.dataset.slide = id;
+    document.querySelectorAll('.slide').forEach(function(s){ s.classList.toggle('on', s.id === id); });
+    document.querySelectorAll('.nav button').forEach(function(b){ b.classList.toggle('on', b.dataset.go === id); });
+    if(history.replaceState) history.replaceState(null, '', '#' + id);
+    // ViewContent — один раз на каждый формат за визит
+    if(!seen[id]){ seen[id] = 1; px('track','ViewContent',{content_name:NAMES[id], content_category:id, content_type:'service'}); }
+    if(byUser) px('trackCustom','SwitchFormat',{format:id});
+  }
+  function step(){ show(document.body.dataset.slide === 'mafia' ? 'team' : 'mafia', true); }
+  document.querySelectorAll('[data-go]').forEach(function(b){ b.onclick = function(){ show(b.dataset.go, true); }; });
+  document.querySelectorAll('[data-next],[data-prev]').forEach(function(b){ b.onclick = step; });
+  document.querySelectorAll('[data-game]').forEach(function(b){
+    b.onclick = function(){
+      game = b.dataset.game;
+      document.querySelectorAll('[data-game]').forEach(function(x){ x.classList.toggle('on', x === b); });
+      updateLinks();
+      px('track','CustomizeProduct',{content_name:'Кибертурнир', content_category:'teambuilding', game:game});
+    };
+  });
+  document.querySelectorAll('.cta').forEach(function(a){
+    a.addEventListener('click', function(){
+      var p = {content_name:NAMES[a.dataset.goal], content_category:a.dataset.goal};
+      if(a.dataset.goal === 'teambuilding') p.game = game;
+      px('track','Lead', p);      // главная конверсия: переход в Telegram с заявкой
+      px('track','Contact', p);
+    });
+  });
+  // Остальные клики: Telegram / Instagram / карта
+  document.querySelectorAll('[data-track]').forEach(function(a){
+    a.addEventListener('click', function(){
+      var ev = a.dataset.track, p = {format:document.body.dataset.slide};
+      if(ev === 'FindLocation') px('track','FindLocation', p); else px('trackCustom', ev, p);
+    });
+  });
+  // Вовлечённость: 30 секунд на странице
+  setTimeout(function(){ px('trackCustom','Engaged30s',{format:document.body.dataset.slide}); }, 30000);
+  // Ссылка из рекламы: ...#mafia или ...#team открывает нужный формат
+  var h = location.hash.replace('#','');
+  show(h === 'team' || h === 'teambuilding' ? 'team' : 'mafia');
+  updateLinks();
+</script>
+</body>
+</html>
