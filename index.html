@@ -105,21 +105,99 @@
     .bottom{display:flex;justify-content:center;padding:6px 16px 28px}
   }
   @media (min-width:901px){ .mcta{display:none} .bottom{display:contents} }
+  /* Квиз тимбилдинга */
+  .quiz{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(3,10,12,.66);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;transition:opacity .25s}
+  .quiz.open{opacity:1}
+  .quiz[hidden]{display:none}
+  .q-card{position:relative;width:min(520px,100%);max-height:calc(100svh - 32px);overflow:auto;background:linear-gradient(180deg,#123236,#0a1c1f);border:1px solid rgba(255,255,255,.12);border-radius:26px;padding:26px 26px 24px;box-shadow:0 40px 90px -30px rgba(0,0,0,.9);transform:translateY(14px);transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+  .quiz.open .q-card{transform:none}
+  .q-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .q-step{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#d4ff3a}
+  .q-close{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);font-size:20px;line-height:1;display:grid;place-items:center}
+  .q-close:hover{background:rgba(255,255,255,.2)}
+  .q-bar{height:4px;border-radius:4px;background:rgba(255,255,255,.1);overflow:hidden;margin-bottom:22px}
+  .q-bar i{display:block;height:100%;width:25%;background:#d4ff3a;border-radius:4px;transition:width .35s ease}
+  .q-pane{display:none}
+  .q-pane.on{display:block;animation:up .4s cubic-bezier(.2,.7,.2,1)}
+  .q-pane h3{font-size:clamp(21px,3vw,26px);font-weight:600;line-height:1.2;margin-bottom:18px}
+  .q-opts{display:grid;gap:10px}
+  .q-opts button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:16px 18px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);font-size:16px;font-weight:600;text-align:left;transition:background .2s,border-color .2s,transform .15s}
+  .q-opts button::after{content:"→";opacity:.4;transition:opacity .2s,transform .2s}
+  .q-opts button:hover{background:rgba(255,255,255,.13);border-color:rgba(212,255,58,.5)}
+  .q-opts button:hover::after{opacity:1;transform:translateX(3px)}
+  .q-opts button.sel{background:#d4ff3a;color:#0b0c0c;border-color:#d4ff3a}
+  .q-sum{font-size:13px;color:var(--soft);margin:-8px 0 18px}
+  .q-field{display:block;margin-bottom:12px}
+  .q-field span{display:block;font-size:12px;color:var(--soft);margin-bottom:6px}
+  .q-field input{width:100%;height:52px;padding:0 16px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;font:500 16px Montserrat,sans-serif;outline:none;transition:border-color .2s,background .2s}
+  .q-field input:focus{border-color:#d4ff3a;background:rgba(255,255,255,.09)}
+  .q-field input.bad{border-color:#ff5c6c}
+  .q-err{min-height:18px;font-size:13px;color:#ff8a96;margin:-2px 0 10px}
+  .q-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+  .q-submit{width:100%;justify-content:center;padding:17px 20px;border:0;cursor:pointer}
+  .q-submit[disabled]{opacity:.6;cursor:wait}
+  .q-note{font-size:11px;color:rgba(255,255,255,.45);text-align:center;margin-top:12px;line-height:1.5}
+  .q-back{margin-top:16px;font-size:13px;color:var(--soft);text-decoration:underline;text-underline-offset:3px}
+  .q-back[hidden]{display:none}
+  .q-done{text-align:center;padding:10px 0 4px}
+  .q-done .ok{width:64px;height:64px;margin:0 auto 18px;border-radius:50%;background:#d4ff3a;color:#0b0c0c;display:grid;place-items:center;font-size:30px;font-weight:700}
+  .q-done p{color:var(--soft);margin:-6px 0 22px;line-height:1.6}
+  .q-done .cta{justify-content:center}
+  @media (max-width:600px){
+    .quiz{place-items:end center;padding:0}
+    .q-card{width:100%;border-radius:24px 24px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom));max-height:92svh}
+  }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
-<!-- Meta Pixel -->
+<!-- Аналитика: Meta Pixel + Conversions API + Microsoft Clarity -->
 <script>
-!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-document,'script','https://connect.facebook.net/en_US/fbevents.js');
-fbq.disablePushState = true; // переключение слайдов (#mafia/#team) не считается новым PageView
-fbq('init','4194705274189334');
-fbq('track','PageView');
+  var PIXEL_ID = '4194705274189334';
+  var CLARITY_ID = 'zj4dlcdfuj';            // ID проекта Microsoft Clarity
+  var CAPI_URL = '/.netlify/functions/capi';
+
+  // Куки _fbp / _fbc ставим сразу, чтобы браузер и сервер передали одинаковые значения
+  function getCookie(n){ var m = document.cookie.match('(?:^|; )' + n + '=([^;]*)'); return m ? decodeURIComponent(m[1]) : ''; }
+  function setCookie(n, v){ document.cookie = n + '=' + v + ';path=/;max-age=7776000;SameSite=Lax'; }
+  (function(){
+    if(!getCookie('_fbp')) setCookie('_fbp', 'fb.1.' + Date.now() + '.' + Math.floor(Math.random() * 1e10));
+    var fbclid = new URLSearchParams(location.search).get('fbclid');
+    if(fbclid && getCookie('_fbc').split('.').pop() !== fbclid) setCookie('_fbc', 'fb.1.' + Date.now() + '.' + fbclid);
+  })();
+
+  // Одно событие -> пиксель + CAPI (с общим event_id для дедупликации) + Clarity
+  window.track = function(name, params, custom, user){
+    params = params || {};
+    var id = name + '.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10);
+    try{ if(window.fbq) fbq(custom ? 'trackCustom' : 'track', name, params, {eventID: id}); }catch(e){}
+    try{
+      var body = JSON.stringify({event_name: name, event_id: id, event_source_url: location.href,
+        fbp: getCookie('_fbp') || undefined, fbc: getCookie('_fbc') || undefined, custom_data: params,
+        ph: user && user.ph || undefined, fn: user && user.fn || undefined});
+      if(location.protocol === 'https:') fetch(CAPI_URL, {method: 'POST', keepalive: true, headers: {'content-type': 'application/json'}, body: body}).catch(function(){});
+    }catch(e){}
+    try{ if(window.clarity) clarity('event', name); }catch(e){}
+  };
+
+  // Meta Pixel
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq.disablePushState = true; // переключение слайдов (#mafia/#team) не считается новым PageView
+  fbq('init', PIXEL_ID);
+
+  // Microsoft Clarity
+  if(CLARITY_ID){
+    (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", CLARITY_ID);
+  }
+
+  track('PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=4194705274189334&ev=PageView&noscript=1" alt=""></noscript>
-<!-- End Meta Pixel -->
+<!-- /Аналитика -->
 </head>
 <body data-slide="mafia">
 <main class="stage">
@@ -173,13 +251,56 @@ fbq('track','PageView');
       <div class="label">В финале</div>
       <div class="chips"><span class="chip on">кубок 🏆</span></div>
     </div>
-    <div class="mcta"><a class="cta" data-goal="teambuilding" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.6 19.8c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.2-8.3c.4-.4-.1-.6-.6-.2L6 13.3l-4.9-1.5c-1.1-.3-1.1-1.1.2-1.6L20.5 2.8c.9-.3 1.7.2 1.4 1.5z"/></svg>Оставить заявку в Telegram</a></div>
+    <div class="mcta"><a class="cta" data-goal="teambuilding" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.6 19.8c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.2-8.3c.4-.4-.1-.6-.6-.2L6 13.3l-4.9-1.5c-1.1-.3-1.1-1.1.2-1.6L20.5 2.8c.9-.3 1.7.2 1.4 1.5z"/></svg>Оставить заявку</a></div>
   </section>
 
   <div class="bottom">
     <a class="foot" data-track="FindLocation" href="https://maps.google.com/?q=Al.+Jerozolimskie+63,+Warszawa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Al. Jerozolimskie 63, Варшава</a>
   </div>
 </main>
+
+<div class="quiz" id="quiz" hidden role="dialog" aria-modal="true" aria-label="Заявка на кибертурнир">
+  <div class="q-card">
+    <div class="q-top"><span class="q-step" id="qStep">Шаг 1 из 4</span><button class="q-close" type="button" aria-label="Закрыть">×</button></div>
+    <div class="q-bar"><i id="qBar"></i></div>
+    <form id="qForm" novalidate>
+      <section class="q-pane on" data-key="people">
+        <h3>Сколько человек будет играть?</h3>
+        <div class="q-opts"><button type="button" data-v="10–20 человек">10–20 человек</button><button type="button" data-v="20–40 человек">20–40 человек</button><button type="button" data-v="40–60 человек">40–60 человек</button></div>
+      </section>
+      <section class="q-pane" data-key="when">
+        <h3>Когда планируете турнир?</h3>
+        <div class="q-opts"><button type="button" data-v="В этом месяце">В этом месяце</button><button type="button" data-v="В следующем месяце">В следующем месяце</button><button type="button" data-v="Пока выбираем дату">Пока выбираем дату</button></div>
+      </section>
+      <section class="q-pane" data-key="channel">
+        <h3>Как с вами удобнее связаться?</h3>
+        <div class="q-opts"><button type="button" data-v="Telegram">Telegram</button><button type="button" data-v="WhatsApp">WhatsApp</button><button type="button" data-v="Звонок">Звонок по телефону</button></div>
+      </section>
+      <section class="q-pane" data-key="contacts">
+        <h3>Куда прислать предложение?</h3>
+        <p class="q-sum" id="qSum"></p>
+        <label class="q-field"><span>Ваше имя</span><input id="qName" name="name" autocomplete="given-name" maxlength="60" placeholder="Например, Анна"></label>
+        <label class="q-field"><span id="qContactLabel">Телефон</span><input id="qContact" name="contact" autocomplete="tel" inputmode="tel" maxlength="60" placeholder="+48 ___ ___ ___"></label>
+        <input class="q-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="q-err" id="qErr" role="alert"></div>
+        <button class="cta q-submit" type="submit" id="qSubmit">Отправить заявку</button>
+        <p class="q-note">Ответим в течение рабочего дня и пришлём варианты по формату и цене.</p>
+      </section>
+      <section class="q-pane q-done" data-key="done">
+        <div class="ok">✓</div>
+        <h3>Заявка отправлена!</h3>
+        <p id="qDoneText">Менеджер свяжется с вами в ближайшее время.</p>
+        <button class="cta" type="button" data-close>Хорошо</button>
+      </section>
+      <section class="q-pane q-done" data-key="fail">
+        <h3>Не получилось отправить</h3>
+        <p>Напишите нам в Telegram — ваши ответы уже вставлены в сообщение.</p>
+        <a class="cta" id="qFallback" href="https://t.me/catharsisgaming" target="_blank" rel="noopener">Написать в Telegram</a>
+      </section>
+    </form>
+    <button class="q-back" type="button" id="qBack" hidden>← Назад</button>
+  </div>
+</div>
 
 <script>
   var TG = 'https://t.me/catharsisgaming?text=';
@@ -193,7 +314,7 @@ fbq('track','PageView');
   }
   var order = ['mafia','team'];
   var NAMES = {mafia:'Мафия', team:'Тимбилдинг', teambuilding:'Тимбилдинг'};
-  function px(type, name, params){ try{ if(window.fbq) fbq(type, name, params || {}); }catch(e){} }
+  function px(type, name, params){ track(name, params, type === 'trackCustom'); }
   var seen = {};
   function show(id, byUser){
     if(order.indexOf(id) < 0) id = 'mafia';
@@ -201,6 +322,7 @@ fbq('track','PageView');
     document.querySelectorAll('.slide').forEach(function(s){ s.classList.toggle('on', s.id === id); });
     document.querySelectorAll('.nav button').forEach(function(b){ b.classList.toggle('on', b.dataset.go === id); });
     if(history.replaceState) history.replaceState(null, '', '#' + id);
+    try{ if(window.clarity) clarity('set', 'format', id); }catch(e){}
     // ViewContent — один раз на каждый формат за визит
     if(!seen[id]){ seen[id] = 1; px('track','ViewContent',{content_name:NAMES[id], content_category:id, content_type:'service'}); }
     if(byUser) px('trackCustom','SwitchFormat',{format:id});
@@ -216,13 +338,94 @@ fbq('track','PageView');
       px('track','CustomizeProduct',{content_name:'Кибертурнир', content_category:'teambuilding', game:game});
     };
   });
-  document.querySelectorAll('.cta').forEach(function(a){
-    a.addEventListener('click', function(){
+  document.querySelectorAll('.cta[data-goal]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      if(a.dataset.goal === 'teambuilding'){ e.preventDefault(); openQuiz(); return; }
       var p = {content_name:NAMES[a.dataset.goal], content_category:a.dataset.goal};
-      if(a.dataset.goal === 'teambuilding') p.game = game;
-      px('track','Lead', p);      // главная конверсия: переход в Telegram с заявкой
+      px('track','Lead', p);      // мафия: главная конверсия — переход в Telegram
       px('track','Contact', p);
     });
+  });
+
+  // ---------- Квиз тимбилдинга ----------
+  var quiz = document.getElementById('quiz'), qForm = document.getElementById('qForm');
+  var panes = [].slice.call(quiz.querySelectorAll('.q-pane')), qi = 0, answers = {}, lastFocus;
+  var $ = function(id){ return document.getElementById(id); };
+  function goPane(key){
+    panes.forEach(function(p){ p.classList.toggle('on', p.dataset.key === key); });
+    var idx = ['people','when','channel','contacts'].indexOf(key);
+    if(idx >= 0){ qi = idx; $('qStep').textContent = 'Шаг ' + (idx + 1) + ' из 4'; $('qBar').style.width = ((idx + 1) * 25) + '%'; }
+    else { $('qStep').textContent = key === 'done' ? 'Готово' : 'Заявка'; $('qBar').style.width = '100%'; }
+    $('qBack').hidden = !(idx > 0);
+    if(key === 'contacts'){
+      var tg = answers.channel === 'Telegram';
+      $('qContactLabel').textContent = tg ? 'Telegram: @username или телефон' : 'Телефон' + (answers.channel === 'WhatsApp' ? ' (WhatsApp)' : '');
+      $('qContact').placeholder = tg ? '@username или +48…' : '+48 ___ ___ ___';
+      $('qContact').inputMode = tg ? 'text' : 'tel';
+      $('qSum').textContent = [answers.people, answers.when, game].join(' · ');
+      setTimeout(function(){ $('qName').focus(); }, 50);
+    }
+  }
+  function openQuiz(){
+    lastFocus = document.activeElement;
+    quiz.hidden = false; requestAnimationFrame(function(){ quiz.classList.add('open'); });
+    document.body.style.overflow = 'hidden';
+    if(!panes.some(function(p){ return p.classList.contains('on') && (p.dataset.key === 'done'); })) goPane(['people','when','channel','contacts'][qi]);
+    px('trackCustom','QuizStart',{content_category:'teambuilding', game:game});
+    var b = quiz.querySelector('.q-pane.on button, .q-pane.on input'); if(b) b.focus();
+  }
+  function closeQuiz(){
+    quiz.classList.remove('open'); document.body.style.overflow = '';
+    setTimeout(function(){ quiz.hidden = true; }, 250);
+    if(lastFocus) lastFocus.focus();
+  }
+  quiz.querySelector('.q-close').onclick = closeQuiz;
+  quiz.querySelectorAll('[data-close]').forEach(function(b){ b.onclick = closeQuiz; });
+  quiz.addEventListener('click', function(e){ if(e.target === quiz) closeQuiz(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !quiz.hidden) closeQuiz(); });
+  quiz.querySelectorAll('.q-opts button').forEach(function(b){
+    b.onclick = function(){
+      var pane = b.closest('.q-pane'), key = pane.dataset.key;
+      answers[key] = b.dataset.v;
+      pane.querySelectorAll('button').forEach(function(x){ x.classList.toggle('sel', x === b); });
+      setTimeout(function(){ goPane(['people','when','channel','contacts'][['people','when','channel'].indexOf(key) + 1]); }, 180);
+    };
+  });
+  $('qBack').onclick = function(){ if(qi > 0) goPane(['people','when','channel','contacts'][qi - 1]); };
+
+  function tgFallbackText(){
+    return 'Здравствуйте, хочу заказать кибертурнир для команды.\nЛюдей: ' + (answers.people || '—') + '\nКогда: ' + (answers.when || '—') +
+      '\nИгра: ' + game + '\nИмя: ' + $('qName').value.trim() + '\nКонтакт: ' + $('qContact').value.trim();
+  }
+  qForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = $('qName').value.trim(), contact = $('qContact').value.trim(), digits = contact.replace(/\D/g, '');
+    var userOk = answers.channel === 'Telegram' && /^@?[A-Za-z0-9_]{4,32}$/.test(contact);
+    $('qName').classList.toggle('bad', !name);
+    $('qContact').classList.toggle('bad', !(digits.length >= 7 || userOk));
+    if(!name){ $('qErr').textContent = 'Укажите, как к вам обращаться'; $('qName').focus(); return; }
+    if(!(digits.length >= 7 || userOk)){ $('qErr').textContent = answers.channel === 'Telegram' ? 'Укажите @username или номер телефона' : 'Укажите номер телефона'; $('qContact').focus(); return; }
+    $('qErr').textContent = '';
+    var btn = $('qSubmit'); btn.disabled = true; btn.textContent = 'Отправляем…';
+    var data = {people: answers.people, when: answers.when, channel: answers.channel, game: game, name: name, contact: contact,
+      page: location.href, website: qForm.website.value};
+    var leadParams = {content_name:'Тимбилдинг', content_category:'teambuilding', game:game, people:answers.people, when:answers.when, channel:answers.channel};
+    var user = {ph: digits.length >= 7 ? digits : undefined, fn: name};
+    fetch('/.netlify/functions/lead', {method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(data)})
+      .then(function(r){ return r.json().then(function(j){ if(!r.ok || !j.ok) throw new Error(j.error || r.status); }); })
+      .then(function(){
+        track('Lead', leadParams, false, user);   // главная конверсия тимбилдинга — отправленная форма
+        $('qDoneText').textContent = 'Свяжемся с вами ' + (answers.channel === 'Звонок' ? 'по телефону' : 'в ' + answers.channel) + ' в ближайшее время.';
+        goPane('done');
+      })
+      .catch(function(){
+        $('qFallback').href = TG + encodeURIComponent(tgFallbackText());
+        goPane('fail');
+      })
+      .then(function(){ btn.disabled = false; btn.textContent = 'Отправить заявку'; });
+  });
+  $('qFallback').addEventListener('click', function(){
+    px('track','Lead', {content_name:'Тимбилдинг', content_category:'teambuilding', game:game, people:answers.people, when:answers.when, channel:'Telegram (fallback)'});
   });
   // Остальные клики: Telegram / Instagram / карта
   document.querySelectorAll('[data-track]').forEach(function(a){
